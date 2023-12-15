@@ -10,12 +10,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-6k8_j+geg42g-n^lr5^)=#d70@(nj)an=&tcv#ji*$998&!8m#'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1' ,'herokuapp.com']
 
 
 # Application definition
@@ -72,13 +72,12 @@ WSGI_APPLICATION = 'nomad.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+import dj_database_url
+import os
 
+DATABASES = {
+    'default': dj_database_url.config(default=os.environ.get('postgres://obyiqmaarxwgzt:577c69b67ad1b7a6dd133607cad35151a5daf161ff770e2f6d7f76d3272524ef@ec2-3-210-173-88.compute-1.amazonaws.com:5432/d97n9jk1iqg70t'))
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -123,3 +122,14 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass
+
+if not DEBUG:
+    SECRET_KEY = 'django-insecure-6k8_j+geg42g-n^lr5^)=#d70@(nj)an=&tcv#ji*$998&!8m#'
+    import django_heroku
+    django_heroku.settings(locals())
