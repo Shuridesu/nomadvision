@@ -135,10 +135,7 @@ DATABASES['default'].update(db_from_env)
 db_from_env = dj_database_url.config(conn_max_age=600, ssl_require=True)
 DATABASES['default'].update(db_from_env)
 
-try:
-    from .local_settings import *
-except ImportError:
-    pass
+
 
 if not DEBUG:
     SECRET_KEY = 'django-insecure-6k8_j+geg42g-n^lr5^)=#d70@(nj)an=&tcv#ji*$998&!8m#'
