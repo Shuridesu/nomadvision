@@ -76,7 +76,7 @@ import dj_database_url
 import os
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('postgres://obyiqmaarxwgzt:577c69b67ad1b7a6dd133607cad35151a5daf161ff770e2f6d7f76d3272524ef@ec2-3-210-173-88.compute-1.amazonaws.com:5432/d97n9jk1iqg70t'))
+    'default': dj_database_url.config(default=os.environ.get('postgres://wxrxzejvbiffxy:313d2ee4bebf120f0e0e2953ce0f19da9a35f1949083afc4e798973ee621626f@ec2-3-210-173-88.compute-1.amazonaws.com:5432/d74kg641du7rvr'))
 }
 
 # Password validation
