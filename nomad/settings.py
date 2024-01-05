@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,14 +29,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
     'django_bootstrap_icons',
     'crispy_forms',
     'crispy_bootstrap5',
     'django_bootstrap5',
     'django.contrib.sites', # 追加
     'rest_framework',
-    'cloudinary_storage',
-    'cloudinary',
+    
 ]
 
 SITE_ID = 1
@@ -131,7 +133,7 @@ STATICFILES_DIRS = (
 )
 
 CLOUDINARY_STORAGE  = {
-    'CLOUD_NAME':os.environ.get('CLOUDINARY_NAME'),
+    'CLOUD_NAME':os.environ.get('CLOUD_NAME'),
     'API_KEY': os.environ.get('API_KEY'),
     'API_SECRET': os.environ.get('API_SECRET')
 }
