@@ -34,12 +34,15 @@ INSTALLED_APPS = [
     'django_bootstrap5',
     'django.contrib.sites', # 追加
     'rest_framework',
+    'cloudinary_storage',
+    'cloudinary',
 ]
 
 SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -79,6 +82,8 @@ DATABASES = {
     'default': dj_database_url.config(default=os.environ.get('postgres://wxrxzejvbiffxy:313d2ee4bebf120f0e0e2953ce0f19da9a35f1949083afc4e798973ee621626f@ec2-3-210-173-88.compute-1.amazonaws.com:5432/d74kg641du7rvr'))
 }
 
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -116,6 +121,8 @@ USE_TZ = True
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # メディアファイルの保存場所
 MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
 STATIC_URL = '/static/'
@@ -123,6 +130,11 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
+CLOUDINARY_STORAGE  = {
+    'CLOUD_NAME':os.environ.get('CLOUDINARY_NAME'),
+    'API_KEY': os.environ.get('API_KEY'),
+    'API_SECRET': os.environ.get('API_SECRET')
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -141,3 +153,4 @@ if not DEBUG:
     SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'デフォルトの秘密鍵')
     import django_heroku
     django_heroku.settings(locals())
+    
