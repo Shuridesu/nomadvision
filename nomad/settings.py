@@ -3,23 +3,11 @@
 from pathlib import Path
 import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1' ,'herokuapp.com','nomadvision-e83b637ecb0f.herokuapp.com',]
-
-
-# Application definition
 
 INSTALLED_APPS = [
     'nomadApp',
@@ -35,7 +23,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'django_bootstrap5',
-    'django.contrib.sites', # 追加
+    'django.contrib.sites', 
     'rest_framework',
     
 ]
@@ -73,21 +61,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'nomad.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 import dj_database_url
 import os
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('postgres://wxrxzejvbiffxy:313d2ee4bebf120f0e0e2953ce0f19da9a35f1949083afc4e798973ee621626f@ec2-3-210-173-88.compute-1.amazonaws.com:5432/d74kg641du7rvr'))
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 }
-
-
-
-# Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -104,10 +83,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -117,11 +92,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # メディアファイルの保存場所
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
@@ -138,9 +109,6 @@ CLOUDINARY_STORAGE  = {
     'API_SECRET': os.environ.get('API_SECRET')
 }
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 import dj_database_url
@@ -152,7 +120,7 @@ DATABASES['default'].update(db_from_env)
 
 
 if not DEBUG:
-    SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'デフォルトの秘密鍵')
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'デフォルトの秘密鍵')
     import django_heroku
     django_heroku.settings(locals())
     
