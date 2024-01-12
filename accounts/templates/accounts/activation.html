@@ -1,0 +1,19 @@
+{% block subject %}
+[{{site_name}}] Registration Confirmation
+{% endblock subject %}
+
+{% block text_body %}
+Dear {{ name }},
+
+Thank you for using {{site_name}}.
+
+Please complete your registration by following the link below:
+{{ protocol }}://{{ domain }}/{{ url|safe }}
+
+Once registered, you will have full access to all the features of {{site_name}}.
+
+--------------------------------------
+Issued by: {{site_name}}
+--------------------------------------
+
+{% endblock text_body %}

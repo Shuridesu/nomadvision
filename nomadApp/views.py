@@ -1,36 +1,44 @@
 from rest_framework.generics import ListAPIView,RetrieveAPIView
 from .models import Post,Category
 from .serializers import IndexSerializer,CategorySerializer
+from rest_framework.permissions import AllowAny
 
 class LatestPostsView(ListAPIView):
     serializer_class = IndexSerializer
     queryset = Post.objects.all().order_by('-pub_date')
+    permission_classes = (AllowAny,)
 
 class RecommendedPostsView(ListAPIView):
     serializer_class = IndexSerializer
     queryset = Post.objects.filter(is_recommended=True)
+    permission_classes = (AllowAny,)
     
 class TrendsAiPostsView(ListAPIView):
     serializer_class = IndexSerializer
     queryset = Post.objects.filter(is_trends_ai=True)
+    permission_classes = (AllowAny,)
     
 class TrendsDataPostsView(ListAPIView):
     serializer_class = IndexSerializer
     queryset = Post.objects.filter(is_trends_data=True)
+    permission_classes = (AllowAny,)
     
 class IndustryAnalyticsPostsView(ListAPIView):
     serializer_class = IndexSerializer
     queryset = Post.objects.filter(is_industry_insights=True)
+    permission_classes = (AllowAny,)
     
 class AiSoftwarePostsView(ListAPIView):
     serializer_class = IndexSerializer
     queryset = Post.objects.filter(is_ai_software=True)
+    permission_classes = (AllowAny,)
     
 from rest_framework.response import Response
 
 class PostDetailView(RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = IndexSerializer
+    permission_classes = (AllowAny,)
     lookup_field = 'slug'
 
     def retrieve(self, request, *args, **kwargs):
@@ -54,6 +62,7 @@ class PostDetailView(RetrieveAPIView):
 
 class PostCategoryView(ListAPIView):
     serializer_class = IndexSerializer
+    permission_classes = (AllowAny,)
     def get_queryset(self):
         category_slug = self.kwargs['category']
         return Post.objects.filter(category__slug=category_slug)
@@ -61,3 +70,4 @@ class PostCategoryView(ListAPIView):
 class CategoryView(ListAPIView):
      serializer_class = CategorySerializer
      queryset = Category.objects.all()
+     permission_classes = (AllowAny,)
