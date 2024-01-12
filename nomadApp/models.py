@@ -90,7 +90,7 @@ class Post(models.Model):
     is_trends_data = models.BooleanField(default = False)
     is_industry_insights = models.BooleanField(default = False)
     is_ai_software = models.BooleanField(default = False)
-    
+    sponsor_link = models.CharField(max_length = 500, blank = True, null = True, default='')
     
     def save(self,*args, **kwargs):
         if not self.slug:
