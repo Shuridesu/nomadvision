@@ -31,9 +31,7 @@ INSTALLED_APPS = [
     'rest_framework',
     "rest_framework.authtoken",
     "djoser",
-    "accounts",
     "corsheaders",
-    
 ]
 
 SITE_ID = 1
@@ -77,7 +75,7 @@ import os
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite3')
+        default=os.environ.get('DATABASE_URL')
     )
 }
 
@@ -205,7 +203,8 @@ if not DEBUG:
     import django_heroku
     django_heroku.settings(locals())
 
-AUTH_USER_MODEL = "accounts.UserAccount"
+
 
 SITE_DOMAIN = os.environ.get('SITE_DOMAIN')
 SITE_NAME = os.environ.get('SITE_NAME')
+
