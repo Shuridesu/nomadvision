@@ -9,7 +9,7 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1' ,'herokuapp.com','nomadvision-e83b637ecb0f.herokuapp.com','localhost',]
 
@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "djoser",
     "corsheaders",
+    'accounts',
 ]
 
 SITE_ID = 1
@@ -195,6 +196,8 @@ DJOSER = {
         "password_changed_confirmation": "accounts.email.ResetPasswordEmail",
     },
 }
+
+AUTH_USER_MODEL = "accounts.UserAccount"
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
