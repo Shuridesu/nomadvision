@@ -9,7 +9,7 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['127.0.0.1' ,'herokuapp.com','nomadvision-e83b637ecb0f.herokuapp.com','localhost', 'nomadvision.org']
 
@@ -205,8 +205,6 @@ if not DEBUG:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     import django_heroku
     django_heroku.settings(locals())
-
-
 
 SITE_DOMAIN = os.environ.get('SITE_DOMAIN')
 SITE_NAME = os.environ.get('SITE_NAME')
