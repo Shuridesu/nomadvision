@@ -9,7 +9,7 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-DEBUG = os.environ.get('DEBUG', 'False')
+DEBUG = os.environ.get('DEBUG', False)
 
 ALLOWED_HOSTS = ['127.0.0.1' ,'herokuapp.com','nomadvision-e83b637ecb0f.herokuapp.com','localhost', 'nomadvision.org']
 
