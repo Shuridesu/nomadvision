@@ -20,10 +20,25 @@ class Category(models.Model):
         return self.name
 
 
-    
 
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 
+def send_email(post):
+        User = get_user_model()
+        subject = "A New Article Has Been Published: " + post.title
+        html_message=render_to_string('email/new_post_notification.html', {'post': post})
+        plain_message = strip_tags(html_message)
+        from_email = settings.EMAIL_HOST_USER
+        emails = [user.email for user in User.objects.filter(is_active=True) if user.email]
     
+        for email in emails:
+            msg = EmailMultiAlternatives(subject, plain_message, from_email, [email])
+            msg.attach_alternative(html_message, "text/html")  # HTMLコンテンツを追加
+            msg.send()
     
 class Post(models.Model):
     title= models.CharField(max_length=200)
@@ -80,10 +95,18 @@ class Post(models.Model):
     is_ai_software = models.BooleanField(default = False)
     sponsor_link = models.CharField(max_length = 500, blank = True, null = True, default='')
     
+    
+    
     def save(self,*args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+        is_new = self.pk is None
         super().save(*args, **kwargs)
+        if is_new:
+            send_email(self)
+        
+    
+    
 
     def __str__(self):
         return f"{self.title},{self.category}"

@@ -71,3 +71,34 @@ class CategoryView(ListAPIView):
      serializer_class = CategorySerializer
      queryset = Category.objects.all()
      permission_classes = (AllowAny,)
+     
+# views.py
+from django.core.mail import EmailMessage
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.conf import settings
+
+class ContactView(APIView):
+    permission_classes = (AllowAny,)
+    def post(self, request, *args, **kwargs):
+        subject = "from nomadvision's client"
+        message = request.data.get('message')
+        from_email = settings.EMAIL_HOST_USER  # 送信元メールアドレス
+        user_email = request.data.get('email')  # ユーザーのメールアドレス
+
+        email = EmailMessage(
+            subject,
+            message,
+            from_email,
+            [settings.DEFAULT_TO_EMAIL],  # 受信者メールアドレス
+            headers={'Reply-To': user_email}
+        )
+
+        try:
+            email.send()
+            return Response({'message': 'Email sent successfully'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+

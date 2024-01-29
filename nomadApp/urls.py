@@ -13,6 +13,7 @@ urlpatterns = [
     path('tag/<slug:category>/',views.PostCategoryView.as_view(), name = 'category'),
     path('tag/',views.CategoryView.as_view(),name = 'category'),
     path('posts/<slug:slug>/', views.PostDetailView.as_view(), name='post-detail'),
+    path('send-email/', views.ContactView.as_view(), name='send_email'),
 ]
 
 

@@ -128,6 +128,8 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD1')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
+DEFAULT_TO_EMAIL = os.environ.get('TO_EMAIL')
+
 
 # Rest Framework設定
 REST_FRAMEWORK = {
