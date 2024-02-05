@@ -2,6 +2,11 @@ from django.urls import path, include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework.routers import DefaultRouter
+from .views import CommentViewSet
+
+router = DefaultRouter()
+router.register(r'comments', CommentViewSet)
 
 urlpatterns = [
     path('posts/latest/', views.LatestPostsView.as_view(), name='latest-posts'),
@@ -14,6 +19,8 @@ urlpatterns = [
     path('tag/',views.CategoryView.as_view(),name = 'category'),
     path('posts/<slug:slug>/', views.PostDetailView.as_view(), name='post-detail'),
     path('send-email/', views.ContactView.as_view(), name='send_email'),
+    path('search/', views.SearchPostsView.as_view(), name='search'),
+    path('', include(router.urls)),
 ]
 
 

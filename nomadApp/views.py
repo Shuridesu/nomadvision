@@ -1,7 +1,7 @@
 from rest_framework.generics import ListAPIView,RetrieveAPIView
 from .models import Post,Category
 from .serializers import IndexSerializer,CategorySerializer
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 
 class LatestPostsView(ListAPIView):
     serializer_class = IndexSerializer
@@ -101,4 +101,29 @@ class ContactView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+from django.http import JsonResponse
+from .models import Post
+from django.db.models import Q
+
+class SearchPostsView(ListAPIView):
+    serializer_class = IndexSerializer
+    permission_classes = (AllowAny,)
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        object_list = Post.objects.filter(
+            Q(title__icontains=query) | Q(subtitle__icontains=query)
+        )
+        return object_list
+    
+    
+from rest_framework import viewsets, permissions
+from .models import Comment
+from .serializers import CommentSerializer
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 

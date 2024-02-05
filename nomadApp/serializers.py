@@ -13,3 +13,10 @@ class IndexSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = '__all__'
+        
+from .models import Comment
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['id', 'post', 'user', 'content', 'created_at']
+        read_only_fields = ['user']
