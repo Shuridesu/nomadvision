@@ -119,11 +119,42 @@ class SearchPostsView(ListAPIView):
 from rest_framework import viewsets, permissions
 from .models import Comment
 from .serializers import CommentSerializer
+from rest_framework.decorators import action
+
+
+from rest_framework import permissions
+
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    """オブジェクトの所有者のみが編集可能なカスタム権限クラス"""
+
+    def has_object_permission(self, request, view, obj):
+        # 読み取り権限はすべてのリクエストに許可される
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        # 書き込み権限はオブジェクトの所有者にのみ許可される
+        return obj.user == request.user
+
+
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        print(self.request.data)
+        post_slug = self.request.data.get('post')
+        parent_id = self.request.data.get('parent', None)
+        post = Post.objects.get(slug=post_slug)
+        parent = Comment.objects.get(id=parent_id) if parent_id else None
+        serializer.save(user=self.request.user,post=post,parent=parent)
+        
+    @action(detail=False, methods=['get'], url_path=r'article-comments/(?P<slug>[\w-]+)')
+    def get_article_comments(self, request, slug=None):
+        
+        post = Post.objects.get(slug=slug)
+        comments = self.queryset.filter(post=post).order_by('created_at')
+        serializer = self.get_serializer(comments, many=True)
+        return Response(serializer.data)
+        
 
