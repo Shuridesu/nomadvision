@@ -101,19 +101,40 @@ class ContactView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-from django.http import JsonResponse
-from .models import Post
-from django.db.models import Q
 
-class SearchPostsView(ListAPIView):
-    serializer_class = IndexSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.db.models import Q
+from .models import Post, Category
+from .serializers import CategorySerializer  # 仮定
+from rest_framework.permissions import AllowAny
+
+class SearchView(APIView):
     permission_classes = (AllowAny,)
-    def get_queryset(self):
-        query = self.request.GET.get('q')
-        object_list = Post.objects.filter(
+
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q', '')
+
+        # 記事の検索結果
+        posts = Post.objects.filter(
             Q(title__icontains=query) | Q(subtitle__icontains=query)
         )
-        return object_list
+        posts_serializer = IndexSerializer(posts, many=True)
+
+        # カテゴリーの検索結果
+        categories = Category.objects.filter(
+            Q(name__icontains=query)
+        )
+        categories_serializer = CategorySerializer(categories, many=True)
+
+        # カテゴリーと記事の検索結果を一つのレスポンスにまとめる
+        response_data = {
+            'posts': posts_serializer.data,
+            'categories': categories_serializer.data
+        }
+
+        return Response(response_data)
+
     
     
 from rest_framework import viewsets, permissions
