@@ -20,7 +20,6 @@ class UserManager(BaseUserManager):
         # normalize email address
         email = self.normalize_email(email)
         email = email.lower()
-
         # create and save user model
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -42,9 +41,9 @@ class UserManager(BaseUserManager):
 class UserAccount(AbstractBaseUser, PermissionsMixin):
     uid = models.CharField("uid", max_length=30, unique=True)
     email = models.EmailField("mail_address", max_length=255, unique=True)
-    name = models.CharField("name", max_length=255)
+    name = models.CharField("name", max_length=50, null=True, blank=True)
     avatar = models.ImageField(
-        upload_to="avatar", verbose_name="profile_photo", null=True, blank=True
+        upload_to="avatar", verbose_name="avatar", null=True, blank=True
     )
     introduction = models.TextField("introduction", null=True, blank=True)
     updated_at = models.DateTimeField("renewed_date", auto_now=True)
@@ -64,7 +63,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = "user accounts"
 
     def __str__(self):
-        return self.name
+        return self.email
 
 
 #generate random uid for each user when user is created

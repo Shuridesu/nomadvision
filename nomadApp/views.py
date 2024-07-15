@@ -109,6 +109,7 @@ from .models import Post, Category
 from .serializers import CategorySerializer  # 仮定
 from rest_framework.permissions import AllowAny
 
+
 class SearchView(APIView):
     permission_classes = (AllowAny,)
 
@@ -172,7 +173,6 @@ class CommentViewSet(viewsets.ModelViewSet):
         
     @action(detail=False, methods=['get'], url_path=r'article-comments/(?P<slug>[\w-]+)')
     def get_article_comments(self, request, slug=None):
-        
         post = Post.objects.get(slug=slug)
         comments = self.queryset.filter(post=post).order_by('created_at')
         serializer = self.get_serializer(comments, many=True)

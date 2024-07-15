@@ -51,7 +51,9 @@ class UserAdminCustom(UserAdmin):
     list_display = (
         "uid",
         "name",
+        "introduction",
         "email",
+        "avatar",
         "is_active",
         "updated_at",
         "created_at",

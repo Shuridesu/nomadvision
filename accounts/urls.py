@@ -1,7 +1,23 @@
-from django.urls import path
-from accounts import views
+from django.urls import path,re_path
+from .views import (
+    CustomTokenObtainPairView,
+    CustomTokenRefreshView,
+    CustomTokenVerifyView,
+    CustomProviderAuthView,
+    LogoutView,
+    UserDetailView
+)
 
 urlpatterns = [
     # ユーザー詳細
-    path("users/<uid>/", views.UserDetailView.as_view()),
+    path("users/<uid>/", UserDetailView.as_view()),
+    re_path(
+        r'^o/(?P<provider>\S+)/$',
+        CustomProviderAuthView.as_view(),
+        name='provider-auth'
+    ),
+    path('jwt/create/',CustomTokenObtainPairView.as_view()),
+    path('jwt/refresh/',CustomTokenRefreshView.as_view()),
+    path('jwt/verify/',CustomTokenVerifyView.as_view()),
+    path('logout/',LogoutView.as_view()),
 ]
