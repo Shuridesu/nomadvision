@@ -1,15 +1,13 @@
-
-
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from os import getenv
 
-# .env ファイルから環境変数を読み込む
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['127.0.0.1' ,'herokuapp.com','nomadvision-e83b637ecb0f.herokuapp.com','localhost', 'nomadvision.org']
 
@@ -27,12 +25,15 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'django_bootstrap5',
+    'django_ckeditor_5',
     'django.contrib.sites', 
     'rest_framework',
     "rest_framework.authtoken",
     "djoser",
     "corsheaders",
     'accounts',
+    'social_django',
+    
 ]
 
 SITE_ID = 1
@@ -47,9 +48,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000','https://nomadvision.org',]
+CORS_ALLOWED_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'nomad.urls'
 
@@ -76,7 +79,7 @@ import os
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
+        default=getenv('DATABASE_URL')
     )
 }
 
@@ -113,101 +116,102 @@ STATIC_URL = "static/"
 STATIC_ROOT = str(BASE_DIR / "staticfiles")
 
 CLOUDINARY_STORAGE  = {
-    'CLOUD_NAME':os.environ.get('CLOUD_NAME'),
-    'API_KEY': os.environ.get('API_KEY'),
-    'API_SECRET': os.environ.get('API_SECRET')
+    'CLOUD_NAME':getenv('CLOUD_NAME'),
+    'API_KEY': getenv('API_KEY'),
+    'API_SECRET': getenv('API_SECRET')
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#email settings
+# email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_HOST = getenv('EMAIL_HOST')
 EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD1')
+EMAIL_HOST_USER = getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = getenv('EMAIL_HOST_PASSWORD1')
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
-DEFAULT_TO_EMAIL = os.environ.get('TO_EMAIL')
+DEFAULT_FROM_EMAIL = getenv('DEFAULT_FROM_EMAIL')
+DEFAULT_TO_EMAIL = getenv('TO_EMAIL')
 
 
-# Rest Framework設定
+AUTHENTICATION_BACKENDS=[
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Rest Framework
 REST_FRAMEWORK = {
-    # 認証が必要
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
-    # JWT認証
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "accounts.authentication.CustomJWTAuthentication",
     ],
-    # 日付
-    "DATETIME_FORMAT": "%Y/%m/%d %H:%M",
 }
 
 from datetime import timedelta
 
-# JWT設定
-SIMPLE_JWT = {
-    # アクセストークン(1日)
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    # リフレッシュトークン(5日)
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
-    # 認証タイプ
-    "AUTH_HEADER_TYPES": ("JWT",),
-    # 認証トークン
-    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
-}
+
 
 # Djoser設定
 DJOSER = {
-    # メールアドレスでログイン
     "LOGIN_FIELD": "email",
-    # アカウント本登録メール
     "SEND_ACTIVATION_EMAIL": True,
-    # アカウント本登録完了メール
     "SEND_CONFIRMATION_EMAIL": True,
-    # メールアドレス変更完了メール
     "USERNAME_CHANGED_EMAIL_CONFIRMATION": True,
-    # パスワード変更完了メール
     "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
-    # アカウント登録時に確認用パスワード必須
     "USER_CREATE_PASSWORD_RETYPE": True,
-    # メールアドレス変更時に確認用メールアドレス必須
     "SET_USERNAME_RETYPE": True,
-    # パスワード変更時に確認用パスワード必須
     "SET_PASSWORD_RETYPE": True,
-    # アカウント本登録用URL
-    "ACTIVATION_URL": "signup/{uid}/{token}",
-    # パスワードリセット完了用URL
+    "ACTIVATION_URL": "activation/{uid}/{token}",
     "PASSWORD_RESET_CONFIRM_URL": "reset-password/{uid}/{token}",
-    # カスタムユーザー用シリアライザー
     "SERIALIZERS": {
         "user_create": "accounts.serializers.UserSerializer",
         "user": "accounts.serializers.UserSerializer",
         "current_user": "accounts.serializers.UserSerializer",
     },
     "EMAIL": {
-        # アカウント本登録
         "activation": "accounts.email.ActivationEmail",
-        # アカウント本登録完了
         "confirmation": "accounts.email.ConfirmationEmail",
-        # パスワード再設定
         "password_reset": "accounts.email.ForgotPasswordEmail",
-        # パスワード再設定確認
         "password_changed_confirmation": "accounts.email.ResetPasswordEmail",
     },
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': getenv('REDIRECT_URIS').split(','),
 }
+
 
 AUTH_USER_MODEL = "accounts.UserAccount"
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "openid",
+]
+
+
+#cookie settings
+AUTH_COOKIE = 'access'
+AUTH_COOKIE_ACCESS_MAX_AGE = 60 * 5
+AUTH_COOKIE_REFRESH_MAX_AGE = 60 * 60 * 24
+AUTH_COOKIE_SECURE = getenv('AUTH_COOKIE_SECURE', 'True') == 'True'
+AUTH_COOKIE_HTTP_ONLY = True
+AUTH_COOKIE_PATH = '/'
+AUTH_COOKIE_SAMESITE = 'None'
+
+CORS_ALLOWED_ORIGINS = getenv(
+    "CORS_ALLOW_ALL_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000"
+).split(",")
+
+CORS_ALLOW_CREDENTIALS = True
+
+SECRET_KEY = getenv('SECRET_KEY')
 
 if not DEBUG:
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECRET_KEY = getenv('SECRET_KEY')
     import django_heroku
     django_heroku.settings(locals())
 
-SITE_DOMAIN = os.environ.get('SITE_DOMAIN')
-SITE_NAME = os.environ.get('SITE_NAME')
-
+SITE_DOMAIN = getenv('SITE_DOMAIN')
+SITE_NAME = getenv('SITE_NAME')

@@ -28,8 +28,4 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = "__all__"
     
     def create(self, validated_data):
-        """
-        `parent`フィールドが提供されている場合は、返信コメントとして作成します。
-        提供されていない場合は、通常のコメントとして扱います。
-        """
         return Comment.objects.create(**validated_data)
